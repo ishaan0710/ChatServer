@@ -15,7 +15,7 @@ public class ClientThread extends Thread {
 
     @Override
     public void run() {
-        String message = "";
+        String message;
         while(true) {
             try {
                 message = inputStream.readUTF();

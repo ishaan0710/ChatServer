@@ -154,7 +154,7 @@ public class Client implements ActionListener {
             outputStream.writeUTF(userName);
             chatWindow.setTitle(userName + " Chat Window");
         } catch (IOException e) {
-            System.err.println(e);
+            System.err.println("Unable to create socket" + e);
         }
         logoutButton.setEnabled(true);
         loginButton.setEnabled(false);

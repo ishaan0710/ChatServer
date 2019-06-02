@@ -9,7 +9,7 @@ public class Server {
     ServerSocket serverSocket;
     Socket socket;
 
-    public final static int PORT=999;
+    public final static int PORT=800;
     public final static String LOGOUT_MESSAGE="@@logoutme@@:";
     public final static String UPDATE_USERS="updateuserslist";
 

@@ -2,6 +2,10 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
@@ -21,12 +25,33 @@ public class GetSocket extends Thread {
         try {
             DataInputStream inputStream = new DataInputStream(socket.getInputStream());
             userName = inputStream.readUTF();
-            socketList.add(socket);
-            users.add(userName);
-            broadcastMessage(delimiter + userName + " Logged in at " + (new Date()) + delimiter);
-            sendNewUserList();
-        } catch (IOException e) {
-            System.err.println(e);
+            System.out.println("User " + userName + " trying to login");
+            Connection connection =DB.getConnection();
+            Statement statement = connection.createStatement();
+
+            String sql = "SELECT * FROM authentication WHERE name='" + userName + "';";
+            ResultSet result = statement.executeQuery(sql);
+            /*while (result.next()) {
+                for (int i = 1; i <= result.getMetaData().getColumnCount(); i++) {
+                    if (i > 1) System.out.print(",  ");
+                    String columnValue = result.getString(i);
+                    System.out.print(columnValue + " " + result.getMetaData().getColumnName(i) + " ");
+                }
+            }*/
+            if(result.wasNull()) {
+                broadcastMessage("Invalid user trying to enter chat: " + userName);
+            }
+            else {
+                int id = result.getInt("id");
+                String user = result.getString("name");
+                System.out.println(id + " " + user);
+                socketList.add(socket);
+                users.add(userName);
+                broadcastMessage(delimiter + userName + " Logged in at " + (new Date()) + delimiter);
+                sendNewUserList();
+            }
+        } catch (IOException | SQLException e) {
+            System.err.println(e.getMessage());
         }
     }
 
@@ -70,4 +95,5 @@ public class GetSocket extends Thread {
             }
         }
     }
+
 }
